@@ -1,0 +1,46 @@
+package com.github.mideo.sssh
+
+class packageSpec extends ssshSpec {
+
+  behavior of "ssh"
+
+  it should "create single Credentials List" in {
+    //Given
+    val cred = Credential("testAlias", "testHost", "user", "pass", "~/.ssh/")
+
+    //When
+    credentials = cred
+
+    //Then
+    noException should be thrownBy {
+      ensureCredentialsProvided()
+    }
+    credentials should be(List(cred))
+  }
+
+
+  it should "credentials mutate and access credentials" in {
+    //Given
+    val cred = Credentials.from(testConfig)
+
+    //When
+    credentials = cred
+
+    //Then
+    noException should be thrownBy {
+      ensureCredentialsProvided()
+    }
+    credentials should be(cred)
+  }
+
+  it should "ensure credentials provided" in {
+    //When
+    credentials = List.empty
+
+    //Then
+    the [SshException]  thrownBy {
+      ensureCredentialsProvided()
+    } should have message configError
+
+  }
+}
