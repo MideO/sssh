@@ -14,13 +14,13 @@ abstract class ssshSpec
     ssh {
       credentials = [
         {
-          alias = testhost
+          alias = testAlias
           host = myhostname
           user = username
           password = changeme
         },
         {
-          alias = testhost1
+          alias = testAlias1
           host = myhostname1
           user = username1
           password = changeme1

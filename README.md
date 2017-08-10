@@ -45,7 +45,7 @@ object main extends App {
   sssh.credentials = List(Credential("testAlias", "testHost", "user", "pass", "~/.ssh/id_rsa.pub"), Credential("testAlias1", "testHost1", "user1", "pass1", ""))
   
   //execute command on single host
-  sssh.execute("pwd", "testHost")
+  sssh.execute("pwd", "testAlias")
 
   //execute scpTo for file in current working directory
   sssh.scpTo("build.sbt")

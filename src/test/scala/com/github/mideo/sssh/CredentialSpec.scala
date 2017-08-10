@@ -18,7 +18,7 @@ class CredentialSpec extends ssshSpec {
   it should "have correct values" in {
     val credential: Credential = credentials.head
     credential.host should equal("myhostname")
-    credential.alias should equal("testhost")
+    credential.alias should equal("testAlias")
     credential.user should equal("username")
     credential.pass should equal("changeme")
   }

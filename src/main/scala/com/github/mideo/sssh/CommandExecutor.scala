@@ -24,8 +24,8 @@ trait CommandExecutor {
     }
   }
 
-  def execute(command: String, host:String): Unit = {
-    (credentials filter (_.alias == host)).par foreach {
+  def execute(command: String, alias:String): Unit = {
+    (credentials filter (_.alias == alias)).par foreach {
       credential: Credential => {
         execute(command, credential)
       }

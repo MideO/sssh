@@ -47,10 +47,10 @@ class CommandExecutorSpec extends ssshSpec {
     }
 
     //When
-    commandExec("pass", "testhost1")
+    commandExec("pass", "testAlias1")
 
     //Then
-    (credentials filter (_.alias == "testhost1")).par foreach {
+    (credentials filter (_.alias == "testAlias1")).par foreach {
       verify(session, times(1)).setUserInfo(_)
     }
     verify(session, times(1)).connect()
