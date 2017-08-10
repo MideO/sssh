@@ -80,7 +80,7 @@ object scpFrom extends Scp {
 
   override def writeFile(in: InputStream, out: OutputStream, command: String): Unit = {
     val fileName: String = localFile match {
-      case empty => command.split(" ").last
+      case "" => command.split(" ").last
       case _ => localFile
     }
     var buffer: Array[Byte] = Array.fill[Byte](1024)(0)
