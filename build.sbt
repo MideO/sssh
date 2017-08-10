@@ -4,8 +4,6 @@ description := "A Simple scala ssh library"
 
 scalaVersion := "2.11.8"
 
-version := "0.0.1-SNAPSHOT"
-
 organization := "com.github.mideo"
 
 useGpg := true
@@ -70,4 +68,36 @@ developers := List(
     email = "mide.ojikutu@gmail.com",
     url = url("https://github.com/MideO")
   )
+)
+
+val tagName = Def.setting{
+  s"v${if (releaseUseGlobalVersion.value) (version in ThisBuild).value else version.value}"
+}
+val tagOrHash = Def.setting{
+  if(isSnapshot.value)
+    sys.process.Process("git rev-parse HEAD").lines_!.head
+  else
+    tagName.value
+}
+
+
+// Release
+import ReleaseTransformations._
+
+releaseVersionBump := sbtrelease.Version.Bump.Next
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  releaseStepCommandAndRemaining("^ test"),
+  releaseStepCommandAndRemaining("^ scripted"),
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  releaseStepCommandAndRemaining("^ publishSigned"),
+  releaseStepTask(publish in ThisBuild),
+  setNextVersion,
+  commitNextVersion,
+  pushChanges
 )
