@@ -49,7 +49,7 @@ object scpTo extends Scp {
 
   override def writeFile(in: InputStream, out: OutputStream, command: String):Unit= {
     val fileName: String = localFile match {
-      case empty => command.split(" ").last
+      case "" => command.split(" ").last
       case _ => localFile
     }
     if (data.length == 0) {
