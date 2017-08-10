@@ -1,12 +1,13 @@
 package com.github.mideo.sssh
+
 import com.jcraft.jsch.{JSch, Session}
 import org.mockito.Mockito._
 
 class CommandExecutorSpec extends ssshSpec {
 
-
   object commandExec extends CommandExecutor {
     override val sch: JSch = mock[JSch]
+
     override def runCommand(session: Session, command: String): Unit = {
       session.getHost
       session.setPassword(command)
@@ -57,7 +58,6 @@ class CommandExecutorSpec extends ssshSpec {
     verify(session, times(1)).getHost
     verify(session, times(1)).getHost
     verify(session, times(1)).setPassword("pass")
-
   }
 
 }

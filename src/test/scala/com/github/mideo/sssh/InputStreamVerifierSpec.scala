@@ -77,9 +77,8 @@ class InputStreamVerifierSpec extends ssshSpec {
 
     //Then
     the[SshException] thrownBy {
-      inputStreamVerifier.verifyDataInputStream(in, 100)
+      inputStreamVerifier.verifyDataInputStream(in, 10)
     } should have message "Platypus"
   }
-
 
 }
