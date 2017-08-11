@@ -56,7 +56,7 @@ homepage := Some(url("https://github.com/MideO/sssh"))
 
 scmInfo := Some(
   ScmInfo(
-    url("https://github.com/MideO/scala-jsch"),
+    url("https://github.com/MideO/sssh"),
     "scm:git@github.com/MideO/sssh"
   )
 )
