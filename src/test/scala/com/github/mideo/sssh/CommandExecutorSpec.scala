@@ -1,12 +1,11 @@
 package com.github.mideo.sssh
 
-import com.jcraft.jsch.{JSch, Session}
+import com.jcraft.jsch.Session
 import org.mockito.Mockito._
 
 class CommandExecutorSpec extends ssshSpec {
 
-  object commandExec extends CommandExecutor {
-    override val sch: JSch = mock[JSch]
+  private object commandExec extends CommandExecutor with MockJSch {
 
     override def runCommand(session: Session, command: String): Unit = {
       session.getHost
@@ -14,7 +13,7 @@ class CommandExecutorSpec extends ssshSpec {
     }
   }
 
-  behavior of "CommandExecutorSpec"
+  behavior of "CommandExecutor"
 
   it should "run command on all hosts" in {
     //Given
@@ -33,7 +32,6 @@ class CommandExecutorSpec extends ssshSpec {
     }
     verify(session, times(credentials.size)).connect()
     verify(session, times(credentials.size)).disconnect()
-    verify(session, times(credentials.size)).getHost
     verify(session, times(credentials.size)).getHost
     verify(session, times(credentials.size)).setPassword("pass")
   }
@@ -55,7 +53,6 @@ class CommandExecutorSpec extends ssshSpec {
     }
     verify(session, times(1)).connect()
     verify(session, times(1)).disconnect()
-    verify(session, times(1)).getHost
     verify(session, times(1)).getHost
     verify(session, times(1)).setPassword("pass")
   }

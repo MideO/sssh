@@ -17,7 +17,7 @@ sealed trait Scp
 
   def checkFileSizeCanBeCopied(size:Int): Unit ={
     if (TwoMegaBytes < size) {
-      throw SshException("File to large to copy")
+      throw SSSHException("File to large to copy")
     }
   }
 
@@ -41,7 +41,7 @@ sealed trait Scp
 
 }
 
-object scpTo extends Scp {
+trait ScpTo extends Scp {
 
   override def scpCommand: String = "scp -t "
 
@@ -74,7 +74,7 @@ object scpTo extends Scp {
 }
 
 
-object scpFrom extends Scp {
+trait ScpFrom extends Scp {
 
   override def scpCommand: String = "scp -f "
 
@@ -88,7 +88,10 @@ object scpFrom extends Scp {
     out.flush()
     var i: Int = in.read(buffer)
 
-    var fileSize = new String(buffer).split(" ")(1).toInt
+    var fileSize = i match{
+      case 0 => 0
+      case _ => new String(buffer).split(" ").last.toInt
+    }
     checkFileSizeCanBeCopied(fileSize)
     var data: Array[Byte] = ArrayBuffer[Byte]().toArray
 

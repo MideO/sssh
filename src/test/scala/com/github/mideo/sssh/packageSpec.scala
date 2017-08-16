@@ -38,7 +38,7 @@ class packageSpec extends ssshSpec {
     credentials = List.empty
 
     //Then
-    the [SshException]  thrownBy {
+    the [SSSHException]  thrownBy {
       ensureCredentialsProvided()
     } should have message configError
 

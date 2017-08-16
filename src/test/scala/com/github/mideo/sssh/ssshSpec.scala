@@ -1,5 +1,6 @@
 package com.github.mideo.sssh
 
+import com.jcraft.jsch.JSch
 import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
@@ -9,6 +10,11 @@ abstract class ssshSpec
     with Matchers
     with BeforeAndAfter
     with MockitoSugar {
+
+  trait MockJSch extends CommandExecutor{
+    override val sch: JSch = mock[JSch]
+  }
+
   val configString =
     """
     ssh {

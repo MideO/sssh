@@ -15,7 +15,7 @@ class InputStreamVerifierSpec extends ssshSpec {
 
   object inputStreamVerifier extends InputStreamVerifier
 
-  behavior of "InputStreamVerifierSpec"
+  behavior of "InputStreamVerifier"
 
   it should "verifyDataInputStream with default offset" in {
     val dataTable = Table(
@@ -62,7 +62,7 @@ class InputStreamVerifierSpec extends ssshSpec {
         when(in.available()).thenReturn(1)
 
         //Then
-        the[SshException] thrownBy {
+        the[SSSHException] thrownBy {
           inputStreamVerifier.verifyDataInputStream(in)
         } should have message "Platypus"
     }
@@ -76,7 +76,7 @@ class InputStreamVerifierSpec extends ssshSpec {
     when(in.read).thenReturn('P'.toInt, 'l'.toInt, 'a'.toInt, 't'.toInt, 'y'.toInt, 'p'.toInt, 'u'.toInt, 's'.toInt, '\n'.toInt)
 
     //Then
-    the[SshException] thrownBy {
+    the[SSSHException] thrownBy {
       inputStreamVerifier.verifyDataInputStream(in, 10)
     } should have message "Platypus"
   }

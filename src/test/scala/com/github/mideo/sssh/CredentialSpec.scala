@@ -3,7 +3,7 @@ package com.github.mideo.sssh
 import com.typesafe.config.{ConfigException, ConfigFactory}
 
 class CredentialSpec extends ssshSpec {
-  behavior of "CredentialSpec"
+  behavior of "Credential"
 
   val credentials: List[Credential] = Credentials.from(testConfig)
 

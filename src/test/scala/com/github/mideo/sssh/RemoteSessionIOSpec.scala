@@ -1,13 +1,14 @@
 package com.github.mideo.sssh
 
 import java.io.InputStream
+
 import org.mockito.Mockito._
-import com.jcraft.jsch.ChannelExec
+import com.jcraft.jsch.{ChannelExec, Session}
 import org.mockito.Matchers._
 
 class RemoteSessionIOSpec extends ssshSpec {
 
-  behavior of "RemoteSessionIOSpec"
+  behavior of "RemoteSessionIO"
 
   object remoteSessionIO extends RemoteSessionIO
   var channel: ChannelExec = _
@@ -21,6 +22,9 @@ class RemoteSessionIOSpec extends ssshSpec {
 
   it should "readInputStream when channel is not closed and inputStream is available" in {
     //Given
+    val session = mock[Session]
+    when(channel.getSession).thenReturn(session)
+    when(session.getHost).thenReturn("Fugazzi Host")
     when(channel.getInputStream).thenReturn(in)
     when(channel.isClosed).thenReturn(false, true)
     when(in.available()).thenReturn(5, 0)
@@ -28,7 +32,7 @@ class RemoteSessionIOSpec extends ssshSpec {
     when(in.read(any(classOf[Array[Byte]]), any(classOf[Int]), any(classOf[Int]))).thenReturn(6)
 
     //When
-    val str = remoteSessionIO.readInputStream(channel)
+    val str = remoteSessionIO.readChannelInputStream(channel)
 
     //Then
     verify(channel, times(1)).getInputStream
@@ -44,7 +48,7 @@ class RemoteSessionIOSpec extends ssshSpec {
     when(channel.isClosed).thenReturn(true)
 
     //When
-    val str = remoteSessionIO.readInputStream(channel)
+    val str = remoteSessionIO.readChannelInputStream(channel)
 
     //Then
     verify(channel, times(1)).getInputStream
@@ -60,7 +64,7 @@ class RemoteSessionIOSpec extends ssshSpec {
     when(in.available()).thenReturn(0)
 
     //When
-    val str = remoteSessionIO.readInputStream(channel)
+    val str = remoteSessionIO.readChannelInputStream(channel)
 
     //Then
     verify(channel, times(1)).getInputStream

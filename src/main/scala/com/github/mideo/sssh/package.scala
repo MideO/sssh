@@ -1,16 +1,18 @@
 package com.github.mideo
 
 import java.io.InputStream
-import java.util.logging.{Logger => JLogger}
+import java.util.logging.Logger
 
-import com.jcraft.jsch._
+import com.jcraft.jsch.ChannelExec
 
 import scala.language.experimental.macros
 
 
 package object sssh {
-  case class SshException(private val message: String = "",
-                          private val cause: Throwable = None.orNull) extends RuntimeException(message, cause)
+
+  case class SSSHException(private val message: String = "",
+                           private val cause: Throwable = None.orNull) extends RuntimeException(message, cause)
+
   val configError = "Credentials must be set to run commands, set credentials like such: credentials = Credentials(<Config>)"
   private var _credentials: List[Credential] = List.empty
 
@@ -26,14 +28,14 @@ package object sssh {
 
   def ensureCredentialsProvided(): Unit = {
     if (credentials.size <= 0) {
-      throw SshException(configError)
+      throw SSSHException(configError)
     }
   }
 
   trait RemoteSessionIO {
-    val logger:JLogger = JLogger.getLogger(classOf[RemoteSessionIO].getName)
 
-    def readInputStream(channel: ChannelExec): String = {
+    val logger:Logger = Logger.getLogger(classOf[RemoteSessionIO].getName)
+    def readChannelInputStream(channel: ChannelExec): String = {
       val in = channel.getInputStream
       var str: String = ""
 
@@ -44,11 +46,11 @@ package object sssh {
           val i: Int = in.read(buffer, 0, 1024)
           if (i <= 0) { in.close();return str}
           str = new String(buffer, 0, i)
-          logger.info(s"[remote session input]\n$str")
-
-
+          logger.info(s"[${channel.getSession.getHost}\n$str")
         }
       }
+
+
       str
     }
   }
@@ -70,11 +72,20 @@ package object sssh {
             buffer = in.read
           }
 
-          throw SshException(sb.toString.trim)
+          throw SSSHException(sb.toString.trim)
         case _ => buffer
       }
     }
   }
 
-}
+  object sudo extends Sudo
 
+  object execute extends Execute
+
+  object scpTo extends ScpTo
+
+  object scpFrom extends ScpFrom
+
+
+
+}
