@@ -3,12 +3,13 @@ package com.github.mideo.sssh
 import com.jcraft.jsch.JSch
 import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfter, FlatSpec, Matchers}
 
 abstract class ssshSpec
   extends FlatSpec
     with Matchers
     with BeforeAndAfter
+    with BeforeAndAfterAll
     with MockitoSugar {
 
   trait MockJSch extends CommandExecutor{

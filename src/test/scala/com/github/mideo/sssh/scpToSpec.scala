@@ -14,11 +14,11 @@ class scpToSpec extends ssshSpec {
 
   behavior of "scpTo"
   val data: Array[Byte] = "Fugazzi".getBytes()
-  before {
+  override def beforeAll() {
     Files.write(Paths.get("testFile.txt"), data)
   }
 
-  after {
+  override def afterAll {
     Files.delete(Paths.get("testFile.txt"))
   }
 
