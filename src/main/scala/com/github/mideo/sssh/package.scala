@@ -34,23 +34,27 @@ package object sssh {
 
   trait RemoteSessionIO {
 
-    val logger:Logger = Logger.getLogger(classOf[RemoteSessionIO].getName)
+    val logger: Logger = Logger.getLogger(classOf[RemoteSessionIO].getName)
+
     def readChannelInputStream(channel: ChannelExec): String = {
       val in = channel.getInputStream
+      val err: InputStream = channel.getErrStream
       var str: String = ""
-
       val buffer: Array[Byte] = Array.fill[Byte](1024)(0)
 
-      while (!channel.isClosed) {
-        while (in.available() > 0) {
-          val i: Int = in.read(buffer, 0, 1024)
-          if (i <= 0) { in.close();return str}
-          str = new String(buffer, 0, i)
-          logger.info(s"[${channel.getSession.getHost}\n$str")
-        }
+      val errDataLength = err.read(buffer)
+      if (errDataLength > 0) {
+        in.close()
+        err.close()
+        throw SSSHException(s"[${channel.getSession.getHost}] ${new String(buffer, 0, errDataLength)}")
       }
 
 
+      while (in.available() > 0) {
+        val i: Int = in.read(buffer, 0, 1024)
+        str = new String(buffer, 0, i)
+        logger.info(s"[${channel.getSession.getHost}] \n$str")
+      }
       str
     }
   }
@@ -85,7 +89,5 @@ package object sssh {
   object scpTo extends ScpTo
 
   object scpFrom extends ScpFrom
-
-
 
 }

@@ -7,9 +7,10 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito._
 
 class sudoSpec extends ssshSpec {
+
   private object testSudo
     extends Sudo
-    with MockJSch
+      with MockJSch
 
   behavior of "sudo"
 
@@ -19,12 +20,15 @@ class sudoSpec extends ssshSpec {
     val channel = mock[ChannelExec]
     val out = mock[OutputStream]
     val in = mock[InputStream]
+    val err = mock[InputStream]
 
     credentials = Credentials.from(testConfig)
     credentials foreach {
       credential: Credential => when(testSudo.sch.getSession(credential.user, credential.host)).thenReturn(session)
     }
     when(channel.getSession).thenReturn(session)
+    when(channel.getErrStream).thenReturn(err)
+    when(err.read()).thenReturn(0)
     when(session.getHost).thenReturn("Fugazzi Host")
     when(session.openChannel("exec")).thenReturn(channel)
     when(channel.getOutputStream).thenReturn(out)

@@ -11,7 +11,11 @@ trait CommandExecutor {
   private def execute(command:String, credential: Credential): Unit ={
     val session: Session = sch.getSession(credential.user, credential.host)
     session.setUserInfo(credential)
-    session.connect()
+    try{
+      session.connect()
+    } catch {
+      case _: Throwable => throw SSSHException("Failed to Connect to host")
+    }
     runCommand(session, command)
     session.disconnect()
   }

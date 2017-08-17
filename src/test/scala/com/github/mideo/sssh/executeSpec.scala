@@ -20,12 +20,15 @@ class executeSpec extends ssshSpec {
     val channel = mock[ChannelExec]
     val out = mock[OutputStream]
     val in = mock[InputStream]
+    val err = mock[InputStream]
 
     credentials = Credentials.from(testConfig)
     credentials foreach {
       credential: Credential => when(testExecute.sch.getSession(credential.user, credential.host)).thenReturn(session)
     }
     when(channel.getSession).thenReturn(session)
+    when(channel.getErrStream).thenReturn(err)
+    when(err.read()).thenReturn(0)
     when(session.getHost).thenReturn("Fugazzi Host")
     when(session.openChannel("exec")).thenReturn(channel)
     when(channel.getInputStream).thenReturn(in)

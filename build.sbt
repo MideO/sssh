@@ -42,12 +42,24 @@ pomIncludeRepository := { _ => false }
 
 publishMavenStyle := true
 
+publishArtifact in Test := false
+
+val oss_user = if (sys.env.keySet.contains("OSS_USERNAME")) sys.env("OSS_USERNAME") else ""
+val oss_pass = if (sys.env.keySet.contains("OSS_PASSWORD")) sys.env("OSS_PASSWORD") else ""
+val gpg_pass = if (sys.env.keySet.contains("GPG_PASSWORD")) sys.env("GPG_PASSWORD").toCharArray else Array.emptyCharArray
+
+credentials += Credentials(
+  "Sonatype Nexus Repository Manager",
+  "oss.sonatype.org", oss_user, oss_pass)
+
+pgpPassphrase := Some(gpg_pass)
+
 publishTo := {
   val nexus = "https://oss.sonatype.org/"
   if (isSnapshot.value)
     Some("snapshots" at nexus + "content/repositories/snapshots")
   else
-    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+    Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
 
 licenses := Seq("BSD-style" -> url("http://www.opensource.org/licenses/bsd-license.php"))
@@ -70,11 +82,11 @@ developers := List(
   )
 )
 
-val tagName = Def.setting{
+val tagName = Def.setting {
   s"v${if (releaseUseGlobalVersion.value) (version in ThisBuild).value else version.value}"
 }
-val tagOrHash = Def.setting{
-  if(isSnapshot.value)
+val tagOrHash = Def.setting {
+  if (isSnapshot.value)
     sys.process.Process("git rev-parse HEAD").lines_!.head
   else
     tagName.value

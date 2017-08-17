@@ -11,22 +11,19 @@ class RemoteSessionIOSpec extends ssshSpec {
   behavior of "RemoteSessionIO"
 
   object remoteSessionIO extends RemoteSessionIO
-  var channel: ChannelExec = _
-  var in: InputStream = _
-
-  before {
-    channel = mock[ChannelExec]
-    in = mock[InputStream]
-
-  }
 
   it should "readInputStream when channel is not closed and inputStream is available" in {
     //Given
+    val channel = mock[ChannelExec]
+    val in = mock[InputStream]
+    val err = mock[InputStream]
+
     val session = mock[Session]
     when(channel.getSession).thenReturn(session)
     when(session.getHost).thenReturn("Fugazzi Host")
     when(channel.getInputStream).thenReturn(in)
-    when(channel.isClosed).thenReturn(false, true)
+    when(channel.getErrStream).thenReturn(err)
+    when(err.read()).thenReturn(0)
     when(in.available()).thenReturn(5, 0)
     when(in.read()).thenReturn(Character.getNumericValue('H') * 6)
     when(in.read(any(classOf[Array[Byte]]), any(classOf[Int]), any(classOf[Int]))).thenReturn(6)
@@ -36,41 +33,33 @@ class RemoteSessionIOSpec extends ssshSpec {
 
     //Then
     verify(channel, times(1)).getInputStream
-    verify(channel, times(2)).isClosed
     verify(in, times(2)).available()
     verify(in, times(1)).read(any(classOf[Array[Byte]]), any(classOf[Int]), any(classOf[Int]))
     str should not be empty
   }
 
-  it should "not readInputStream when channel is closed and inputStream is available" in {
+  it should "throw an error is readInputStream has errors" in {
     //Given
+    val channel = mock[ChannelExec]
+    val in = mock[InputStream]
+    val err = mock[InputStream]
+    val session = mock[Session]
+    when(channel.getSession).thenReturn(session)
+    when(session.getHost).thenReturn("Fugazzi Host")
+    when(channel.getErrStream).thenReturn(err)
+
+    when(err.read()).thenReturn(Character.getNumericValue('H') * 6)
+    when(err.read(Array.fill[Byte](1024)(0))).thenReturn(9)
     when(channel.getInputStream).thenReturn(in)
-    when(channel.isClosed).thenReturn(true)
 
     //When
-    val str = remoteSessionIO.readChannelInputStream(channel)
+    val thrown  = the[SSSHException] thrownBy {
+      remoteSessionIO.readChannelInputStream(channel)
+    }
 
     //Then
-    verify(channel, times(1)).getInputStream
-    verify(channel, times(1)).isClosed
-    verify(in, times(0)).available()
-    str should be(empty)
-  }
+    thrown.getMessage should startWith ("[Fugazzi Host] ")
 
-  it should "not readInputStream when channel is not closed and inputStream is not available" in {
-    //Given
-    when(channel.getInputStream).thenReturn(in)
-    when(channel.isClosed).thenReturn(false, true)
-    when(in.available()).thenReturn(0)
-
-    //When
-    val str = remoteSessionIO.readChannelInputStream(channel)
-
-    //Then
-    verify(channel, times(1)).getInputStream
-    verify(channel, times(2)).isClosed
-    verify(in, times(1)).available()
-    str should be(empty)
   }
 
 }

@@ -1,6 +1,6 @@
 package com.github.mideo.sssh
 
-import com.jcraft.jsch.Session
+import com.jcraft.jsch.{JSchException, Session}
 import org.mockito.Mockito._
 
 class CommandExecutorSpec extends ssshSpec {
@@ -55,6 +55,27 @@ class CommandExecutorSpec extends ssshSpec {
     verify(session, times(1)).disconnect()
     verify(session, times(1)).getHost
     verify(session, times(1)).setPassword("pass")
+  }
+
+
+  it should "thrown an error if run command fails" in {
+    //Given
+    val session = mock[Session]
+    when(session.connect()).thenThrow(new JSchException("blah blah blah"))
+    credentials = Credentials.from(testConfig)
+    credentials foreach {
+      credential: Credential => when(commandExec.sch.getSession(credential.user, credential.host)).thenReturn(session)
+    }
+
+    //When
+    the[SSSHException] thrownBy {
+      commandExec("pass", "testAlias1")
+
+      //Then
+    } should have message "Failed to Connect to host"
+
+
+
   }
 
 }

@@ -88,9 +88,12 @@ trait ScpFrom extends Scp {
     out.flush()
     var i: Int = in.read(buffer)
 
-    var fileSize = i match{
+    var fileSize:Int = i match {
       case 0 => 0
-      case _ => new String(buffer).split(" ").last.toInt
+      case _ =>
+        val arr = new String(buffer).split("\\s+")
+        if(arr.length < 1) return 0
+        arr(1).toInt
     }
     checkFileSizeCanBeCopied(fileSize)
     var data: Array[Byte] = ArrayBuffer[Byte]().toArray
