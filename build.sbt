@@ -98,6 +98,8 @@ import ReleaseTransformations._
 
 releaseVersionBump := sbtrelease.Version.Bump.Next
 
+releaseIgnoreUntrackedFiles := true
+
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,

@@ -6,8 +6,7 @@ tmp
 dist
 *.ipr
 *.iws
-*.iml
-/.idea/*.xml
+.idea/
 /*.iml
 /out
 /.idea_modules
