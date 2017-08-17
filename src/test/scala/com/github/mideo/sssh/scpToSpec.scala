@@ -1,7 +1,7 @@
 package com.github.mideo.sssh
 
 import java.io.{ByteArrayInputStream, InputStream, OutputStream}
-import java.nio.file.{Files, Paths}
+import java.nio.file.{StandardOpenOption, Files, Paths}
 
 import com.jcraft.jsch.{ChannelExec, Session}
 import org.mockito.Matchers.any
@@ -15,7 +15,7 @@ class scpToSpec extends ssshSpec {
   behavior of "scpTo"
   val data: Array[Byte] = "Fugazzi".getBytes()
   override def beforeAll() {
-    Files.write(Paths.get("testFile.txt"), data)
+    Files.write(Paths.get("testFile.txt"), data, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
   }
 
   override def afterAll {

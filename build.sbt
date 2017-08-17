@@ -6,8 +6,6 @@ scalaVersion := "2.11.8"
 
 organization := "com.github.mideo"
 
-useGpg := true
-
 lazy val `sssh` = (project in file("."))
   .settings(
     scalacOptions := Seq(
@@ -100,6 +98,8 @@ releaseVersionBump := sbtrelease.Version.Bump.Next
 
 releaseIgnoreUntrackedFiles := true
 
+releasePublishArtifactsAction := PgpKeys.publishSigned.value
+
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
@@ -108,8 +108,7 @@ releaseProcess := Seq[ReleaseStep](
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
-  releaseStepCommandAndRemaining("^ publishSigned"),
-  releaseStepTask(publish in ThisBuild),
+  publishArtifacts,
   setNextVersion,
   commitNextVersion,
   pushChanges
