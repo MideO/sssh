@@ -1,8 +1,8 @@
 ##  sssh
 
-[![Build Status](https://travis-ci.org/MideO/sssh.svg?branch=master)](https://travis-ci.org/MideO/sssh_2.11)
+[![Build Status](https://travis-ci.org/MideO/sssh.svg?branch=master)](https://travis-ci.org/MideO/sssh)
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.mideo/sssh/badge.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.mideo%22%20a%3A%22sssh_2.11%22)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.mideo/sssh_2.11/badge.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.mideo%22%20a%3A%22sssh_2.11%22)
 
 
 A Simple scala ssh library
