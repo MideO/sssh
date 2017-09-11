@@ -100,6 +100,8 @@ releasePublishArtifactsAction := PgpKeys.publishSigned.value
 
 releaseIgnoreUntrackedFiles := true
 
+releasePublishArtifactsAction := PgpKeys.publishSigned.value
+
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
