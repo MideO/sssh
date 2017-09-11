@@ -1,4 +1,6 @@
-package com.github.mideo.sssh
+package tests
+
+import com.github.mideo.sssh._
 
 class packageSpec extends ssshSpec {
 

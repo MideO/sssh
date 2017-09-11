@@ -1,5 +1,6 @@
-package com.github.mideo.sssh
+package tests
 
+import com.github.mideo.sssh._
 import com.jcraft.jsch.{JSchException, Session}
 import org.mockito.Mockito._
 

@@ -1,7 +1,8 @@
-package com.github.mideo.sssh
+package tests
 
 import java.io.{InputStream, OutputStream}
 
+import com.github.mideo.sssh._
 import com.jcraft.jsch.{ChannelExec, Session}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}

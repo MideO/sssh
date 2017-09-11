@@ -6,8 +6,6 @@ scalaVersion := "2.11.8"
 
 organization := "com.github.mideo"
 
-useGpg := true
-
 lazy val `sssh` = (project in file("."))
   .settings(
     scalacOptions := Seq(
@@ -38,7 +36,7 @@ libraryDependencies ++= Seq(
   "org.mockito" % "mockito-all" % "1.9.5" % "test"
 )
 
-pomIncludeRepository := { _ => false }
+pomIncludeRepository := { _ => true }
 
 publishMavenStyle := true
 
@@ -98,6 +96,8 @@ import ReleaseTransformations._
 
 releaseVersionBump := sbtrelease.Version.Bump.Next
 
+releasePublishArtifactsAction := PgpKeys.publishSigned.value
+
 releaseIgnoreUntrackedFiles := true
 
 releaseProcess := Seq[ReleaseStep](
@@ -108,8 +108,7 @@ releaseProcess := Seq[ReleaseStep](
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
-  releaseStepCommandAndRemaining("^ publishSigned"),
-  releaseStepTask(publish in ThisBuild),
+  publishArtifacts,
   setNextVersion,
   commitNextVersion,
   pushChanges

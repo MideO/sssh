@@ -1,10 +1,11 @@
-package com.github.mideo.sssh
+package tests
 
 import java.io.InputStream
 
-import org.mockito.Mockito._
+import com.github.mideo.sssh.{RemoteSessionIO, SSSHException}
 import com.jcraft.jsch.{ChannelExec, Session}
 import org.mockito.Matchers._
+import org.mockito.Mockito._
 
 class RemoteSessionIOSpec extends ssshSpec {
 

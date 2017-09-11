@@ -1,5 +1,6 @@
-package com.github.mideo.sssh
+package tests
 
+import com.github.mideo.sssh.{Credential, Credentials}
 import com.typesafe.config.{ConfigException, ConfigFactory}
 
 class CredentialSpec extends ssshSpec {

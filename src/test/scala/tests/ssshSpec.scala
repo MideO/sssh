@@ -1,9 +1,10 @@
-package com.github.mideo.sssh
+package tests
 
+import com.github.mideo.sssh.CommandExecutor
 import com.jcraft.jsch.JSch
 import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfter, FlatSpec, Matchers}
+import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, FlatSpec, Matchers}
 
 abstract class ssshSpec
   extends FlatSpec

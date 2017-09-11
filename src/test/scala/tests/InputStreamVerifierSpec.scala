@@ -1,9 +1,10 @@
-package com.github.mideo.sssh
+package tests
 
 import java.io.InputStream
 
-import org.mockito.Mockito._
+import com.github.mideo.sssh.{InputStreamVerifier, SSSHException}
 import org.mockito.Matchers._
+import org.mockito.Mockito._
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
 
