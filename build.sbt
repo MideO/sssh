@@ -96,8 +96,6 @@ import ReleaseTransformations._
 
 releaseVersionBump := sbtrelease.Version.Bump.Next
 
-releasePublishArtifactsAction := PgpKeys.publishSigned.value
-
 releaseIgnoreUntrackedFiles := true
 
 releasePublishArtifactsAction := PgpKeys.publishSigned.value
