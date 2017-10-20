@@ -35,8 +35,12 @@ object main extends App {
  
   sssh.credentials = sssh.Credentials.from(ConfigFactory.load("default.conf"))
   
+  //or configLike String 
+  sssh.credentials = sssh.Credentials.from(ConfigFactory.parseString(configString))
+  
   //or Create credentials directly
   sssh.credentials = Credential("testAlias", "testHost", "user", "pass", "~/.ssh/")
+ 
     
   //execute command
   sssh.execute("pwd")
