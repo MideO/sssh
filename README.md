@@ -27,7 +27,7 @@ object main extends App {
           alias = testhost1
           host = myhostname1
           user = username1
-          password = changeme1
+          identity = "path/to/key.pem"
         }
       ]
     }
@@ -39,7 +39,7 @@ object main extends App {
   sssh.credentials = sssh.Credentials.from(ConfigFactory.parseString(configString))
   
   //or Create credentials directly
-  sssh.credentials = Credential("testAlias", "testHost", "user", "pass", "~/.ssh/")
+  sssh.credentials = Credential("testAlias", "testHost", "user", Some("pass"), Some(Paths.get(".ssh/key.pem"))
  
     
   //execute command
@@ -49,7 +49,7 @@ object main extends App {
    sssh.scpFrom("wget-log")
   
   //or Create credentials directly from List
-  sssh.credentials = List(Credential("testAlias", "testHost", "user", "pass", "~/.ssh/id_rsa.pub"), Credential("testAlias1", "testHost1", "user1", "pass1", ""))
+  sssh.credentials = List(Credential("testAlias", "testHost", "user", Some("pass"), Some(Paths.get("PATH/To/key.pub"))), Credential("testAlias1", "testHost1", "user1", Some("pass1"), None))
   
   //execute command on single host
   sssh.execute("pwd", "testAlias")

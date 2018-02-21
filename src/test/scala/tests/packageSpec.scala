@@ -1,5 +1,7 @@
 package tests
 
+import java.nio.file.Paths
+
 import com.github.mideo.sssh._
 
 class packageSpec extends ssshSpec {
@@ -8,7 +10,7 @@ class packageSpec extends ssshSpec {
 
   it should "create single Credentials List" in {
     //Given
-    val cred = Credential("testAlias", "testHost", "user", "pass", "~/.ssh/")
+    val cred = Credential("testAlias", "testHost", "user", Some("pass"), Some(Paths.get("~/.ssh/")))
 
     //When
     credentials = cred

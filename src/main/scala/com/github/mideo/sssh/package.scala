@@ -59,28 +59,6 @@ package object sssh {
     }
   }
 
-  trait InputStreamVerifier {
-    def verifyDataInputStream(in: InputStream, offset: Int = 0): Int = {
-
-      var buffer: Int = offset match {
-        case 0 => in.read
-        case _ => in.read(Array.fill[Byte](1024)(0), 0, offset)
-      }
-
-      buffer match {
-        case _@(0 | -1) => buffer
-        case _@(1 | 2) =>
-          val sb = new StringBuffer
-          while (buffer.toChar != '\n' && in.available() > 0) {
-            sb.append(buffer.toChar)
-            buffer = in.read
-          }
-
-          throw SSSHException(sb.toString.trim)
-        case _ => buffer
-      }
-    }
-  }
 
   object sudo extends Sudo
 

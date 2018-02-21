@@ -9,14 +9,13 @@ import scala.collection.mutable.ArrayBuffer
 
 sealed trait Scp
   extends CommandExecutor
-    with RemoteSessionIO
-    with InputStreamVerifier {
-  val TwoMegaBytes = 2097152
+    with RemoteSessionIO {
+  val TwoGigaBytes = 2147483647
   var localFile:String = new String
   def scpCommand:String
 
   def checkFileSizeCanBeCopied(size:Int): Unit ={
-    if (TwoMegaBytes < size) {
+    if (TwoGigaBytes < size) {
       throw SSSHException("File to large to copy")
     }
   }
@@ -60,8 +59,7 @@ trait ScpTo extends Scp {
 
     out.write(s"C0644 ${data.length} ${fileName.split("/").last} \n".getBytes())
     out.flush()
-    verifyDataInputStream(in)
-
+    in.read(data, 0, data.length)
     out.write(data, 0, data.length)
     out.flush()
   }

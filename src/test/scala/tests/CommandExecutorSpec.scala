@@ -73,7 +73,7 @@ class CommandExecutorSpec extends ssshSpec {
       commandExec("pass", "testAlias1")
 
       //Then
-    } should have message "Failed to Connect to host"
+    } should have message "Failed to Connect to host: com.jcraft.jsch.JSchException: blah blah blah"
 
 
 

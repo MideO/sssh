@@ -1,5 +1,7 @@
 package com.github.mideo.sssh
 
+import java.nio.file.Path
+
 import com.jcraft.jsch.{JSch, Session}
 
 trait CommandExecutor {
@@ -9,12 +11,21 @@ trait CommandExecutor {
   def runCommand(session: Session, command: String): Unit
 
   private def execute(command:String, credential: Credential): Unit ={
+    Option(credential.identity) match {
+      case p:Path => sch.addIdentity(p.toAbsolutePath.toString)
+      case _ => //NoOp
+    }
     val session: Session = sch.getSession(credential.user, credential.host)
+    credential.identity match {
+      case Some(identity) => sch.addIdentity(identity.toAbsolutePath.toString)
+      case None => None
+    }
+
     session.setUserInfo(credential)
     try{
       session.connect()
     } catch {
-      case _: Throwable => throw SSSHException("Failed to Connect to host")
+      case t: Throwable => throw SSSHException(s"Failed to Connect to host: $t")
     }
     runCommand(session, command)
     session.disconnect()

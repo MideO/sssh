@@ -21,17 +21,18 @@ class CredentialSpec extends ssshSpec {
     credential.host should equal("myhostname")
     credential.alias should equal("testAlias")
     credential.user should equal("username")
-    credential.pass should equal("changeme")
+    credential.pass.get should equal("changeme")
   }
 
   it should "provide credential " in {
     val credential: Credential = credentials.head
+    val password = credential.pass.get
     "credential.showMessage(\"blah blah\")" should compile
-    credential.getPassphrase should equal(credential.pass)
-    credential.getPassword should equal(credential.pass)
-    credential.promptPassword(credential.pass) should be(true)
-    credential.promptPassphrase(credential.pass) should be(true)
-    credential.promptYesNo(credential.pass) should be(true)
-    credential.promptKeyboardInteractive("zzz", "xcx", "ddfd", Array("sdsd"), Array(x = true)) should equal(Array(credential.user, credential.pass))
+    credential.getPassphrase should equal(credential.pass.get)
+    credential.getPassword should equal(credential.pass.get)
+    credential.promptPassword(password) should be(true)
+    credential.promptPassphrase(password) should be(true)
+    credential.promptYesNo(password) should be(true)
+    credential.promptKeyboardInteractive("zzz", "xcx", "ddfd", Array("sdsd"), Array(x = true)) should equal(Array(credential.user, credential.pass.get))
   }
 }
