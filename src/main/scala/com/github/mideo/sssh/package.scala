@@ -13,7 +13,7 @@ package object sssh {
   case class SSSHException(private val message: String = "",
                            private val cause: Throwable = None.orNull) extends RuntimeException(message, cause)
 
-  val configError = "Credentials must be set to run commands, set credentials like such: credentials = Credentials(<Config>)"
+  val ConfigError = "Credentials must be set to run commands, set credentials like such: credentials = Credentials(<Config>)"
   private var _credentials: List[Credential] = List.empty
 
   def credentials: List[Credential] = _credentials
@@ -28,7 +28,7 @@ package object sssh {
 
   def ensureCredentialsProvided(): Unit = {
     if (credentials.size <= 0) {
-      throw SSSHException(configError)
+      throw SSSHException(ConfigError)
     }
   }
 

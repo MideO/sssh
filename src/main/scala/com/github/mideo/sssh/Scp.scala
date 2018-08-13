@@ -6,6 +6,7 @@ import java.nio.file.{Files, Paths}
 import com.jcraft.jsch.{ChannelExec, Session}
 
 import scala.collection.mutable.ArrayBuffer
+import Implicits._
 
 sealed trait Scp
   extends CommandExecutor
@@ -51,17 +52,17 @@ trait ScpTo extends Scp {
       case "" => command.split(" ").last
       case _ => localFile
     }
-    if (data.length == 0) {
-      data = Files.readAllBytes(Paths.get(fileName))
+
+    (in getBytes()).read foreach {
+      data: ArrayBuffer[Byte] =>
+        out.write(s"C0644 ${data.length} ${fileName.split("/").last} \n".getBytes())
+        out.flush()
+        in.read(data.toArray, 0, data.length)
+        out.write(data.toArray, 0, data.length)
+        out.flush()
+
     }
 
-    checkFileSizeCanBeCopied(data.length)
-
-    out.write(s"C0644 ${data.length} ${fileName.split("/").last} \n".getBytes())
-    out.flush()
-    in.read(data, 0, data.length)
-    out.write(data, 0, data.length)
-    out.flush()
   }
 
   def apply(fileName: String, in:InputStream): Unit = {
@@ -93,6 +94,8 @@ trait ScpFrom extends Scp {
         if(arr.length < 1) 0
         else arr(1).toInt
     }
+
+
     checkFileSizeCanBeCopied(fileSize)
     var data: Array[Byte] = ArrayBuffer[Byte]().toArray
 

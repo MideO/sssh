@@ -44,7 +44,7 @@ class packageSpec extends ssshSpec {
     //Then
     the [SSSHException]  thrownBy {
       ensureCredentialsProvided()
-    } should have message configError
+    } should have message ConfigError
 
   }
 }

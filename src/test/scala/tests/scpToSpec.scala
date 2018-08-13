@@ -1,12 +1,15 @@
 package tests
 
 import java.io.{ByteArrayInputStream, InputStream, OutputStream}
-import java.nio.file.{StandardOpenOption, Files, Paths}
+import java.nio.file.{Files, Paths, StandardOpenOption}
 
 import com.github.mideo.sssh._
 import com.jcraft.jsch.{ChannelExec, Session}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
+import Implicits._
+
+import scala.collection.mutable.ArrayBuffer
 
 class scpToSpec extends ssshSpec {
   object testScpTo
@@ -43,6 +46,7 @@ class scpToSpec extends ssshSpec {
       when(in.available()).thenReturn(5, 0)
       when(in.read()).thenReturn(Character.getNumericValue('H') * 6)
       when(in.read(any(classOf[Array[Byte]]), any(classOf[Int]), any(classOf[Int]))).thenReturn(6)
+     // when (in getBytes()).thenReturn(ReadProgress[InputStream](Some(ArrayBuffer(data:_*)), 6))
       when(session.getUserInfo).thenReturn(credentials.head)
       val fileName = "testFile.txt"
 
@@ -54,7 +58,7 @@ class scpToSpec extends ssshSpec {
       verify(session, times(credentials.size)).openChannel("exec")
       verify(channel, times(credentials.size)).getOutputStream
       verify(channel, times(credentials.size)).setCommand(s"scp -t  $fileName")
-      verify(out, times(credentials.size)).write(data, 0, data.length)
+      verify(out, times(credentials.size)).write(Array.emptyByteArray, 0, 0)
 
       verify(out, times(credentials.size*2)).flush()
       verify(session, times(credentials.size)).disconnect()
@@ -93,7 +97,7 @@ class scpToSpec extends ssshSpec {
     verify(session, times(credentials.size)).openChannel("exec")
     verify(channel, times(credentials.size)).getOutputStream
     verify(channel, times(credentials.size)).setCommand(s"scp -t  $fileName")
-    verify(out, times(credentials.size)).write(data, 0, data.length)
+    verify(out, times(credentials.size)).write(Array.emptyByteArray, 0, 0)
 
     verify(out, times(credentials.size*2)).flush()
     verify(session, times(credentials.size)).disconnect()
