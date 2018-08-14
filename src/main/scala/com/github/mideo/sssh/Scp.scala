@@ -11,25 +11,16 @@ import Implicits._
 sealed trait Scp
   extends CommandExecutor
     with RemoteSessionIO {
-  val TwoGigaBytes = 2147483647
-  var localFile:String = new String
-  def scpCommand:String
 
-  def checkFileSizeCanBeCopied(size:Int): Unit ={
-    if (TwoGigaBytes < size) {
-      throw SSSHException("File to large to copy")
-    }
-  }
+  def scpCommand:String
 
   def writeFile(in: InputStream, out: OutputStream, command: String):Unit
 
-  override def apply(fileName: String): Unit = execute(s"$scpCommand $fileName")
+  override def apply(fileName: String): Unit = execute(s"$scpCommand $fileName $fileName")
 
   override def apply(fileName: String, localFileName:String): Unit = {
-    localFile = localFileName
-    execute(s"$scpCommand $fileName")
+    execute(s"$scpCommand $fileName $localFileName")
   }
-
   override def runCommand(session: Session, command: String): Unit = {
     val channel: ChannelExec = session.openChannel("exec").asInstanceOf[ChannelExec]
     channel.setCommand(command)
@@ -42,82 +33,33 @@ sealed trait Scp
 }
 
 trait ScpTo extends Scp {
-
   override def scpCommand: String = "scp -t "
 
-  var data: Array[Byte] = ArrayBuffer[Byte]().toArray
-
   override def writeFile(in: InputStream, out: OutputStream, command: String):Unit= {
-    val fileName: String = localFile match {
-      case "" => command.split(" ").last
-      case _ => localFile
-    }
-
+    val fileName: String = command.split(" ").last.split("/").last
     (in getBytes()).read foreach {
       data: ArrayBuffer[Byte] =>
-        out.write(s"C0644 ${data.length} ${fileName.split("/").last} \n".getBytes())
+        out.write(s"C0644 ${data.length} $fileName \n".getBytes())
         out.flush()
         in.read(data.toArray, 0, data.length)
         out.write(data.toArray, 0, data.length)
         out.flush()
-
     }
-
   }
 
   def apply(fileName: String, in:InputStream): Unit = {
-    data = Array.fill[Byte](in.available())(0)
-    in.read(data)
     execute(s"$scpCommand $fileName")
   }
 }
 
 
 trait ScpFrom extends Scp {
-
   override def scpCommand: String = "scp -f "
-
   override def writeFile(in: InputStream, out: OutputStream, command: String): Unit = {
-    val fileName: String = localFile match {
-      case "" => command.split(" ").last
-      case _ => localFile
-    }
-    var buffer: Array[Byte] = Array.fill[Byte](1024)(0)
-    out.write(buffer, 0, 1024)
-    out.flush()
-    var i: Int = in.read(buffer)
-
-    var fileSize:Int = i match {
-      case 0 => 0
-      case _ =>
-        val arr = new String(buffer).split("\\s+")
-        if(arr.length < 1) 0
-        else arr(1).toInt
-    }
-
-
-    checkFileSizeCanBeCopied(fileSize)
-    var data: Array[Byte] = ArrayBuffer[Byte]().toArray
-
-    var MaxBufferSize = 1024 * 4
-
-    while (fileSize > 0) {
-      if(MaxBufferSize > fileSize) {
-        MaxBufferSize = fileSize
-      }
-      fileSize = fileSize - MaxBufferSize
-      buffer = Array.fill[Byte](MaxBufferSize)(0)
-
-      i = in.read(buffer, 0, MaxBufferSize)
-
-      out.write(buffer)
-      out.flush()
-
-      if (i>0) data = data ++ buffer
-
-    }
-
-    Files.write(Paths.get(fileName), data)
+    val fileName: String = command.split(" ").last
+    val data: Option[ArrayBuffer[Byte]] = (in getBytes()).read
+    data foreach { d: ArrayBuffer[Byte] => out.write(d.toArray); out.flush() }
+    data map { d => Files.write(Paths.get(fileName), d.toArray) }
 
   }
 }

@@ -57,7 +57,7 @@ class scpToSpec extends ssshSpec {
       verify(session, times(credentials.size)).connect()
       verify(session, times(credentials.size)).openChannel("exec")
       verify(channel, times(credentials.size)).getOutputStream
-      verify(channel, times(credentials.size)).setCommand(s"scp -t  $fileName")
+      verify(channel, times(credentials.size)).setCommand(s"scp -t  $fileName $fileName")
       verify(out, times(credentials.size)).write(Array.emptyByteArray, 0, 0)
 
       verify(out, times(credentials.size*2)).flush()
