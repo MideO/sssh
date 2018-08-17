@@ -6,6 +6,9 @@ import java.util.logging.Logger
 import com.jcraft.jsch.ChannelExec
 
 import scala.language.experimental.macros
+import com.github.mideo.sssh.Implicits._
+
+import scala.collection.mutable.ArrayBuffer
 
 
 package object sssh {
@@ -33,29 +36,24 @@ package object sssh {
   }
 
   trait RemoteSessionIO {
-
     val logger: Logger = Logger.getLogger(classOf[RemoteSessionIO].getName)
 
     def readChannelInputStream(channel: ChannelExec): String = {
-      val in = channel.getInputStream
-      val err: InputStream = channel.getErrStream
-      var str: String = ""
-      val buffer: Array[Byte] = Array.fill[Byte](1024)(0)
-
-      val errDataLength = err.read(buffer)
-      if (errDataLength > 0) {
-        in.close()
-        err.close()
-        throw SSSHException(s"[${channel.getSession.getHost}] ${new String(buffer, 0, errDataLength)}")
+      channel.getErrStream.getBytes().read map {
+        data => throw SSSHException(s"[${channel.getSession.getHost}] ${new String(data.toArray, 0, data.length)}")
       }
 
+      val res = channel.getInputStream.getBytes().read match {
+        case read:Option[ArrayBuffer[Byte]] if read.isDefined =>
+          read map {
+            data => val str = new String(data.toArray, 0, data.length)
+            logger.info(s"[${channel.getSession.getHost}] \n$str")
+            str
+          }
 
-      while (in.available() > 0) {
-        val i: Int = in.read(buffer, 0, 1024)
-        str = new String(buffer, 0, i)
-        logger.info(s"[${channel.getSession.getHost}] \n$str")
+        case read =>  throw SSSHException(s"[${channel.getSession.getHost}] could not read data from host ${read} ")
       }
-      str
+      res.get
     }
   }
 

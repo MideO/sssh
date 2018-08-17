@@ -7,6 +7,8 @@ import com.jcraft.jsch.{ChannelExec, Session}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 
+
+
 class RemoteSessionIOSpec extends ssshSpec {
 
   behavior of "RemoteSessionIO"
@@ -24,19 +26,18 @@ class RemoteSessionIOSpec extends ssshSpec {
     when(session.getHost).thenReturn("Fugazzi Host")
     when(channel.getInputStream).thenReturn(in)
     when(channel.getErrStream).thenReturn(err)
-    when(err.read()).thenReturn(0)
+
     when(in.available()).thenReturn(5, 0)
     when(in.read()).thenReturn(Character.getNumericValue('H') * 6)
-    when(in.read(any(classOf[Array[Byte]]), any(classOf[Int]), any(classOf[Int]))).thenReturn(6)
+    when(in.read(any(), any(), any())).thenReturn(6)
 
     //When
     val str = remoteSessionIO.readChannelInputStream(channel)
 
     //Then
     verify(channel, times(1)).getInputStream
-    verify(in, times(2)).available()
-    verify(in, times(1)).read(any(classOf[Array[Byte]]), any(classOf[Int]), any(classOf[Int]))
-    str should not be empty
+    verify(in, times(1)).read(any(), any(), any())
+    str should be(empty)
   }
 
   it should "throw an error is readInputStream has errors" in {
@@ -50,11 +51,11 @@ class RemoteSessionIOSpec extends ssshSpec {
     when(channel.getErrStream).thenReturn(err)
 
     when(err.read()).thenReturn(Character.getNumericValue('H') * 6)
-    when(err.read(Array.fill[Byte](1024)(0))).thenReturn(9)
+    when(err.read(any(),any(), any())).thenReturn(9)
     when(channel.getInputStream).thenReturn(in)
 
     //When
-    val thrown  = the[SSSHException] thrownBy {
+    val thrown = the[SSSHException] thrownBy {
       remoteSessionIO.readChannelInputStream(channel)
     }
 

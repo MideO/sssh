@@ -46,7 +46,6 @@ class scpToSpec extends ssshSpec {
       when(in.available()).thenReturn(5, 0)
       when(in.read()).thenReturn(Character.getNumericValue('H') * 6)
       when(in.read(any(classOf[Array[Byte]]), any(classOf[Int]), any(classOf[Int]))).thenReturn(6)
-     // when (in getBytes()).thenReturn(ReadProgress[InputStream](Some(ArrayBuffer(data:_*)), 6))
       when(session.getUserInfo).thenReturn(credentials.head)
       val fileName = "testFile.txt"
 
