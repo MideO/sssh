@@ -2,7 +2,7 @@ name := "sssh"
 
 description := "A Simple scala ssh library"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.6"
 
 organization := "com.github.mideo"
 
@@ -32,7 +32,7 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   "com.jcraft" % "jsch" % "0.1.54",
   "com.typesafe" % "config" % "1.2.1",
-  "org.scalatest" % "scalatest_2.11" % "3.0.3" % "test",
+  "org.scalatest" % "scalatest_2.12" % "3.0.3" % "test",
   "org.mockito" % "mockito-all" % "1.9.5" % "test"
 )
 
